@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Trading Simulation System</title>
+<style>* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.cta button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.cta button:hover {
+    background-color: #0056b3;
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    height: 3px;
+    width: 25px;
+    background-color: #333;
+    margin: 4px 0;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        gap: 1rem;
+        position: absolute;
+        top: 70px;
+        right: 0;
+        width: 100%;
+        background-color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+.trading-form, .portfolio, .performance {
+    margin-top: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+}
+
+form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f8f8f8;
+}
+
+.performance {
+    margin-top: 20px;
+}
+
+.performance p {
+    font-size: 1.2em;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}</style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">LOGO</div>
+            <ul class="nav-links">
+                <li><a href="#" data-section="trading">Stock Trading</a></li>
+                <li><a href="#" data-section="portfolio">Portfolio</a></li>
+                <li><a href="#" data-section="performance">Performance</a></li>
+            </ul>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="section" id="trading">
+            <h1>Stock Trading Simulation System</h1>
+            <div class="trading-form">
+                <h2>Buy Stocks</h2>
+                <form id="buyForm">
+                    <label for="buyStockName">Stock Name:</label>
+                    <input type="text" id="buyStockName" required>
+
+                    <label for="buyQuantity">Quantity:</label>
+                    <input type="number" id="buyQuantity" required>
+
+                    <label for="buyPrice">Price per Stock:</label>
+                    <input type="number" id="buyPrice" required>
+
+                    <button type="submit">Buy</button>
+                </form>
+            </div>
+            <div class="trading-form">
+                <h2>Sell Stocks</h2>
+                <form id="sellForm">
+                    <label for="sellStockName">Stock Name:</label>
+                    <input type="text" id="sellStockName" required>
+
+                    <label for="sellQuantity">Quantity:</label>
+                    <input type="number" id="sellQuantity" required>
+
+                    <button type="submit">Sell</button>
+                </form>
+            </div>
+        </div>
+        <div class="section" id="portfolio">
+            <h2>Portfolio</h2>
+            <table id="portfolioTable">
+                <thead>
+                    <tr>
+                        <th>Stock Name</th>
+                        <th>Quantity</th>
+                        <th>Price per Stock</th>
+                        <th>Total Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Portfolio items will be added here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="section" id="performance">
+            <h2>Portfolio Performance</h2>
+            <p>Total Portfolio Value: $<span id="totalValue">0.00</span></p>
+        </div>
+    </div>
+   <script>document.addEventListener('DOMContentLoaded', () => {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+    
+    mobileMenu.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+    
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const sectionId = this.getAttribute('data-section');
+            showSection(sectionId);
+        });
+    });
+    
+    document.getElementById('buyForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const stockName = document.getElementById('buyStockName').value;
+        const quantity = parseInt(document.getElementById('buyQuantity').value);
+        const price = parseFloat(document.getElementById('buyPrice').value);
+    
+        addStockToPortfolio(stockName, quantity, price);
+    
+        this.reset();
+    });
+    
+    document.getElementById('sellForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const stockName = document.getElementById('sellStockName').value;
+        const quantity = parseInt(document.getElementById('sellQuantity').value);
+    
+        sellStock(stockName, quantity);
+    
+        this.reset();
+    });
+    
+    let portfolio = [];
+    
+    function addStockToPortfolio(stockName, quantity, price) {
+        const existingStock = portfolio.find(stock => stock.stockName === stockName);
+    
+        if (existingStock) {
+            existingStock.quantity += quantity;
+            existingStock.price = ((existingStock.quantity - quantity) * existingStock.price + quantity * price) / existingStock.quantity;
+        } else {
+            portfolio.push({ stockName, quantity, price });
+        }
+    
+        updatePortfolioTable();
+        updatePortfolioPerformance();
+    }
+    
+    function sellStock(stockName, quantity) {
+        const existingStock = portfolio.find(stock => stock.stockName === stockName);
+    
+        if (existingStock && existingStock.quantity >= quantity) {
+            existingStock.quantity -= quantity;
+    
+            if (existingStock.quantity === 0) {
+                portfolio = portfolio.filter(stock => stock.stockName !== stockName);
+            }
+    
+            updatePortfolioTable();
+            updatePortfolioPerformance();
+        } else {
+            alert('Not enough stock to sell');
+        }
+    }
+    
+    function updatePortfolioTable() {
+        const portfolioTable = document.getElementById('portfolioTable').getElementsByTagName('tbody')[0];
+        portfolioTable.innerHTML = '';
+    
+        portfolio.forEach(stock => {
+            const newRow = portfolioTable.insertRow();
+    
+            const stockNameCell = newRow.insertCell(0);
+            const quantityCell = newRow.insertCell(1);
+            const priceCell = newRow.insertCell(2);
+            const totalValueCell = newRow.insertCell(3);
+    
+            stockNameCell.textContent = stock.stockName;
+            quantityCell.textContent = stock.quantity;
+            priceCell.textContent = stock.price.toFixed(2);
+            totalValueCell.textContent = (stock.quantity * stock.price).toFixed(2);
+        });
+    }
+    
+    function updatePortfolioPerformance() {
+        const totalValue = portfolio.reduce((total, stock) => total + (stock.quantity * stock.price), 0);
+        document.getElementById('totalValue').textContent = totalValue.toFixed(2);
+    }
+    
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+    }
+    
+    // Show the default section
+    showSection('trading');
+});
+</script>
+    <script>document.addEventListener('DOMContentLoaded', () => {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                showSection(sectionId);
+            });
+        });
+        
+        document.getElementById('buyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const stockName = document.getElementById('buyStockName').value;
+            const quantity = parseInt(document.getElementById('buyQuantity').value);
+            const price = parseFloat(document.getElementById('buyPrice').value);
+        
+            fetch('/api/buy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stockName, quantity, price }),
+            }).then(response => {
+                if (response.ok) {
+                    addStockToPortfolio(stockName, quantity, price);
+                } else {
+                    alert('Error buying stock');
+                }
+            });
+        });
+        
+        document.getElementById('sellForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const stockName = document.getElementById('sellStockName').value;
+            const quantity = parseInt(document.getElementById('sellQuantity').value);
+        
+            fetch('/api/sell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stockName, quantity }),
+            }).then(response => {
+                if (response.ok) {
+                    sellStock(stockName, quantity);
+                } else {
+                    alert('Error selling stock');
+                }
+            });
+        });
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+    
+        // Show the default section
+        showSection('trading');
+    });
+    </script>
+</body>
+</html>
